@@ -49,7 +49,11 @@ class LoginController extends Controller
         $jwt = JWT::encode($payload, $key, 'HS256');
 
         return response()->json([
-            'token' => $jwt,
+            'code' => 200,
+            'message' => 'ok',
+            'data' => [
+                'token' => $jwt,
+            ],
         ]);
     }
 }

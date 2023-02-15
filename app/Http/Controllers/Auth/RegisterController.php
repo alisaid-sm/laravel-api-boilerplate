@@ -16,6 +16,8 @@ class RegisterController extends Controller
      */
     public function __invoke(Request $request)
     {
+        // error_log(json_encode($request->credential));
+
         $request->validate([
             'name' => ['string', 'required'],
             'username' => ['alpha_num', 'required', 'min:3', 'max:25', 'unique:users,username'],
@@ -30,6 +32,9 @@ class RegisterController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        return response('OK');
+        return response()->json([
+            'code' => 200,
+            'message' => 'ok',
+        ]);
     }
 }
