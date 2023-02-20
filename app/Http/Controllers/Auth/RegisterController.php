@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Firebase\JWT\JWT;
 
 class RegisterController extends Controller
 {
@@ -25,11 +26,18 @@ class RegisterController extends Controller
             'password' => ['required', 'min:6'],
         ]);
 
-        User::create([
+        $key = env("JWT_SECRET_LOGIN");
+
+        $payload = [
+            'iat' => time(),
+        ];
+
+        $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'remember_token' => JWT::encode($payload, $key, 'HS256'),
         ]);
 
         return response()->json([

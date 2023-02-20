@@ -27,12 +27,14 @@ class LoginController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => "User not found"
+                'code' => 400,
+                'message' => "User not found",
             ], 400);
         }
 
         if (!Hash::check($request->password, $user->password)) {
             return response()->json([
+                'code' => 400,
                 'message' => "Password not match"
             ], 400);
         }
@@ -41,9 +43,17 @@ class LoginController extends Controller
 
         // error_log($key);
 
+        /** 
+         * Create token
+         * 
+         * @property user_id user id from db
+         * @property iat issued at
+         * @property exp expired token 1 hour
+         */
         $payload = [
             'user_id' => $user->id,
             'iat' => time(),
+            "exp" => time() + 3600,
         ];
 
         $jwt = JWT::encode($payload, $key, 'HS256');
@@ -53,6 +63,7 @@ class LoginController extends Controller
             'message' => 'ok',
             'data' => [
                 'token' => $jwt,
+                'refresh_token' => $user->remember_token,
             ],
         ]);
     }

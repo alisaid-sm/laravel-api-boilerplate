@@ -35,7 +35,18 @@ class Auth
 
         try {
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
-            // jika token JWT valid, maka kode di dalam blok ini akan dijalankan
+            /**
+             * jika token JWT valid, maka kode di dalam blok ini akan dijalankan
+             */
+
+             $exp = $decoded->exp;
+
+             if ($exp < time()) {
+                return response()->json([
+                    'code' => 401,
+                    'message' => 'Auth expired'
+                ], 401);
+             }
 
             $request->merge(["credential" => [
                 "user_id" => $decoded->user_id
@@ -43,8 +54,10 @@ class Auth
 
             return $next($request);
         } catch (\Exception $e) {
-            // jika terjadi error, maka kode di dalam blok ini akan dijalankan
-            // misalnya token JWT tidak valid atau kunci rahasia tidak cocok
+            /**
+             * jika terjadi error, maka kode di dalam blok ini akan dijalankan
+             * misalnya token JWT tidak valid atau kunci rahasia tidak cocok
+             */
             error_log($e);
 
             return response()->json([
