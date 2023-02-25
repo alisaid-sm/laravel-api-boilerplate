@@ -22,9 +22,7 @@ class UserSeeder extends Seeder
         ];
 
         \App\Models\User::factory()->create([
-            'id' => 1,
             'name' => 'admin',
-            'email' => 'admin@example.com',
             'username' => 'admin',
             'password' => bcrypt('password'),
             'remember_token' => JWT::encode($payload, $key, 'HS256'),
